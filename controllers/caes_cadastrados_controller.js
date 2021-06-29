@@ -39,10 +39,6 @@ module.exports = {
         res.status(200).json(caes);
     },
 
-    // where('nome', 'like', `%${palavra}%`)
-    //             .orWhere('raca_cachorro_id', 'like', `%${palavra}%`)
-    //             .orWhere('idade', 'like', `%${palavra}%`)
-    //             .orWhere('foto', 'like', `%${palavra}%`)
 
 
 
@@ -67,13 +63,24 @@ module.exports = {
 
     //mostar destaque
     async index_destaque(req, res) {
-
+        
         try {
             const destaques = await knex("caes_cadastrados").where({ destaque: true })
-            res.status(200).json({ destaques });
+            res.status(200).json( destaques );
         } catch (error) {
             res.status(400).json({ error: error.message })
         }
+
+        // try{
+        //    const destaques = await knex.select("c.id", "c.nome", "r.nome as raca","c.raca_cachorro_id", "c.idade", "c.foto", "c.destaque")
+        //     .from("caes_cadastrados as c")
+        //     .leftJoin("raca_cachorro as r", "c.raca_cachorro_id", "r.id")
+        //     .where("c.destaque", true)
+        //     .orderBy("c.id", "desc")
+        //     res.status(200).json(destaques) 
+        // }catch (error) {
+        //         res.status(400).json({ error: error.message })
+        //     }
 
     },
 
@@ -185,6 +192,7 @@ module.exports = {
         }
 
     },
+
     async show_caes(req, res) {
         const { palavra } = req.params
         try {
@@ -198,6 +206,7 @@ module.exports = {
         }
     },
 
+    //traz a busca utilizando id
     async show_id(req, res) {
         const id = req.params.id
        // const { id } = req.params

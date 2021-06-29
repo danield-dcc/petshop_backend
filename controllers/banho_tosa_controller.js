@@ -84,6 +84,29 @@ module.exports = {
         }
     },
 
+    //SHOW UTILIZANDO ID
+    async show_id(req, res) {
+        const id = req.params.id
+       // const { id } = req.params
 
+        // const caes = await knex
+        //     .select("c.id", "c.nome", "r.nome as raca","c.raca_cachorro_id", "c.idade", "c.foto", "c.destaque")
+        //     .from("caes_cadastrados as c")
+        //     .leftJoin("raca_cachorro as r", "c.raca_cachorro_id", "r.id")
+        //     .where("c.id", id)
+
+        // res.status(200).json(caes[0]);
+
+        const caes = await knex            
+            .select("a.id", "a.dia", "a.hora","a.preco", "c.nome as cliente","a.caes_cadastrados_id","a.cliente_id",  "caes.nome as nome_do_cachorro", "ra.nome as raca", "caes.foto")
+            .from("agendamento_banho_tosa as a")
+            .leftJoin("clientes as c","a.cliente_id", "c.id")
+            .innerJoin("caes_cadastrados as caes", "a.caes_cadastrados_id", "caes.id")
+            .innerJoin("raca_cachorro as ra", "ra.id", "caes.raca_cachorro_id")
+            .where("a.id", id)
+            
+
+        res.status(200).json(caes[0]);
+    },
 
 }

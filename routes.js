@@ -55,6 +55,7 @@ routes.get("/banho_tosa", banho_tosa.index)
     .put("/banho_tosa/:id", banho_tosa.update)
     .delete("/banho_tosa/:id", banho_tosa.destroy)
     .get("/banho_tosa/buscar/:palavra", banho_tosa.show)
+    .get("/banho_tosa/buscar_id/:id",banho_tosa.show_id)     //busca utilizando id
 
 
 
