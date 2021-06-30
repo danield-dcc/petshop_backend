@@ -43,14 +43,24 @@ module.exports = {
 
 
     async store(req, res) {
+
+        console.log(req.body)
+
         // faz a desestruturação do objeto req.body
         const { nome, idade, raca_cachorro_id, foto } = req.body;
 
-        // validação para os campos
-        // if (!nome || !idade || !raca_cachorro_id || !foto) {
-        //     res.status(400).json({ erro: "Enviar nome, raca_cachorro_id, idade e foto" });
-        //     return;
-        // }
+        if (!nome) {
+            res.status(400).json({
+              erro: "faltou nome",
+            });
+            return;
+          }
+
+        //validação para os campos
+        if (!nome || !idade || !raca_cachorro_id || !foto) {
+            res.status(400).json({ erro: "Enviar nome, raca_cachorro_id, idade e foto" });
+            return;
+        }
 
         try {
             const novo = await knex("caes_cadastrados").insert({ nome, idade, raca_cachorro_id, foto });
@@ -64,24 +74,44 @@ module.exports = {
     //mostar destaque
     async index_destaque(req, res) {
         
-        try {
-            const destaques = await knex("caes_cadastrados").where({ destaque: true })
-            res.status(200).json( destaques );
-        } catch (error) {
-            res.status(400).json({ error: error.message })
-        }
+        // try {
+        //     const destaques = await knex("caes_cadastrados").where({ destaque: true })
+        //     res.status(200).json( destaques );
+        // } catch (error) {
+        //     res.status(400).json({ error: error.message })
+        // }
 
+
+        
+        try{
+           const destaques = await knex.select("c.id", "c.nome", "r.nome as raca","c.raca_cachorro_id", "c.idade", "c.foto", "c.destaque")
+            .from("caes_cadastrados as c")
+            .leftJoin("raca_cachorro as r", "c.raca_cachorro_id", "r.id")
+            .where("c.destaque", true)
+            .orderBy("c.id", "desc")
+            res.status(200).json(destaques) 
+        }catch (error) {
+                res.status(400).json({ error: error.message })
+            }
+
+
+
+        
         // try{
-        //    const destaques = await knex.select("c.id", "c.nome", "r.nome as raca","c.raca_cachorro_id", "c.idade", "c.foto", "c.destaque")
-        //     .from("caes_cadastrados as c")
-        //     .leftJoin("raca_cachorro as r", "c.raca_cachorro_id", "r.id")
-        //     .where("c.destaque", true)
-        //     .orderBy("c.id", "desc")
-        //     res.status(200).json(destaques) 
-        // }catch (error) {
-        //         res.status(400).json({ error: error.message })
-        //     }
+        //     const destaques = await knex("caes_cadastrados").where({ destaque: true })
+        //             .select("a.id", "c.nome as cliente", "caes.nome as nome_do_cachorro", "ra.nome as raca", "caes.foto", "c.idade")
+        //             .from("agendamento_banho_tosa as a")
+        //             .leftJoin("clientes as c","a.cliente_id", "c.id")
+        //             .innerJoin("caes_cadastrados as caes", "a.caes_cadastrados_id", "caes.id")
+        //             .innerJoin("raca_cachorro as ra", "ra.id", "caes.raca_cachorro_id")
+        //             .orderBy("a.id")
+        //             res.status(200).json( destaques );
+        // }catch{
+        //     res.status(400).json({ error: error.message })
+        // }
+        
 
+        
     },
 
     //destacar
@@ -185,7 +215,7 @@ module.exports = {
         const { nome, idade, raca_cachorro_id, foto } = req.body;
 
         try {
-            await knex('caes_cadastrados').update({ nome, raca_cachorro_id, idade, foto }).where({ id })
+            await knex('caes_cadastrados').update({ nome, idade, raca_cachorro_id, foto }).where({ id })
             res.status(200).json({ msg: `Pet alterado com sucesso` })
         } catch (error) {
             res.status(400).json({ msg: error.message })

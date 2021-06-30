@@ -39,10 +39,11 @@ routes.get("/usuarios", usuarios_controller.index)
 
 
 routes.get("/clientes", clientes_controller.index)
-    .post("/clientes", /*login,*/ clientes_controller.store)
+    .post("/clientes", clientes_controller.store)
     .put("/clientes/atualizar/:id", clientes_controller.update)
     .delete("/clientes/:id", clientes_controller.destroy)
     .get("/clientes/buscar/:palavra", clientes_controller.show)
+    .get("/clientes/busca_id/:id", clientes_controller.show_id)  //busca utilizando id
 
 
 routes.get("/raca", raca_cachorro_controller.index)

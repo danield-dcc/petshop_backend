@@ -22,21 +22,47 @@ module.exports = {
     },
 
     async store(req, res) {
-        // a desestruturação do objeto req.body
-        const { nome, endereco, cpf, telefone, caes_cadastrados_id } = req.body;
+        // // a desestruturação do objeto req.body
+        // console.log(req.body)
+        // const { nome, endereco, cpf, telefone, caes_cadastrados_id } = req.body;
 
-        //validação dos campos
-        if (!nome || !endereco || !cpf || !telefone) {
-            res.status(400).json({ erro: "Cadastrar nome, endereço, cpf, telefone" })
-        }
+        // //validação dos campos
+        // if (!nome || !endereco || !cpf || !telefone) {
+        //     res.status(400).json({ erro: "Cadastrar nome, endereço, cpf, telefone" })
+        // }
 
 
-        try {
-            const novo = await knex("clientes").insert({ nome, endereco, cpf, telefone, caes_cadastrados_id })
-            res.status(201).json({ id: novo[0] });
-        } catch (error) {
-            res.status(400).json({ error: messages })
-        }
+        // try {
+        //     const novo = await knex("clientes").insert( {nome, endereco, cpf, telefone, caes_cadastrados_id} )
+        //     res.status(200).json({ id: novo[0] });
+        // } catch (error) {
+        //     res.status(400).json({ error: messages })
+        // }
+
+         // faz a desestruturação do objeto req.body
+         const { nome, endereco, cpf, telefone, caes_cadastrados_id } = req.body;
+
+         if (!nome) {
+             res.status(400).json({
+               erro: "faltou nome",
+             });
+             return;
+           }
+ 
+         //validação para os campos
+         if (!nome || !endereco || !cpf || !telefone || !caes_cadastrados_id) {
+             res.status(400).json({ erro: "Enviar nome, raca_cachorro_id, idade e foto" });
+             return;
+         }
+ 
+         try {
+             const novo = await knex("clientes").insert({ nome, endereco, cpf, telefone, caes_cadastrados_id });
+             res.status(201).json({ id: novo[0] });
+         } catch (error) {
+             res.status(400).json({ erro: error.message });
+         }
+
+
     },
 
 
@@ -80,5 +106,24 @@ module.exports = {
     },
 
 
+    //show utilizando id
+    //traz a busca utilizando id
+    async show_id(req, res) {
+        const id = req.params.id
+       // const { id } = req.params
+
+        const caes = await knex
+            .select("c.id", "c.nome", "c.endereco", "c.cpf", "c.telefone", "caes.nome as nome_do_cachorro", "c.caes_cadastrados_id")
+            .from("clientes as c")
+            .leftJoin("caes_cadastrados as caes", "c.caes_cadastrados_id", "caes.id")
+            .where("c.id", id)
+
+        // const caes = await knex.select("c.id", "c.nome", "c.endereco", "c.cpf", "c.telefone", "caes.nome as nome_do_cachorro", "caes.foto")
+        //     .from("clientes as c",)
+        //     .leftJoin("caes_cadastrados as caes", "c.caes_cadastrados_id", "caes.id")
+        //     .orderBy("c.id", id )
+
+         res.status(200).json(caes[0]);
+    },
 
 }

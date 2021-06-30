@@ -78,7 +78,7 @@ module.exports = {
                     usuario_id: dados[0].id,                //dados que encnotramos no tolken do usuario
                     usuario_nome: dados[0].nome
                 }, process.env.JWT_KEY, {                     //salt
-                    expiresIn: 300000
+                    expiresIn: "1h"
                 }
                 );
 
